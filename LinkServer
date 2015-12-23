@@ -1,0 +1,44 @@
+--First open Advance Option--
+EXEC sp_configure 'Show advanced options',1;
+RECONFIGURE;
+GO
+
+--Second open Ad Hoc--
+EXEC sp_configure 'Ad Hoc Distributed Queries',1;
+GO
+RECONFIGURE;
+GO
+
+--Connect to access
+	--Microsoft.ACE.OlEDB.12.0 for *.accdb
+	--Microsoft.ACE.OLEDB.12.0 x64 office
+	--Microsoft.Jet.OlEDB.4.0 x86 office
+SELECT A.* FROM OpenRowSet('Microsoft.ACE.OLEDB.12.0',
+						'C:\External_HDD\TestDBMS.mdb';'Admin';'',
+						Tbl_Products) AS A;
+GO
+
+
+--Connect to Excel
+SELECT * FROM OpenRowSet('Microsoft.ACE.OLEDB.12.0',
+						'Excel 8.0; Database=C:\External_HDD\TestXLS.xls;HDR=YES;IMEX=1',
+						'SELECT * FROM [Tbl_Student$]');
+GO
+
+
+--Connect to textfile
+SELECT * FROM OpenDataSource('Microsoft.ACE.OLEDB.12.0',
+							'Data Source=C:\External_HDD\;
+							Extended Properties="Text;
+							HDR=YES;FMT=CSVDelimited"')...[StoreDB#txt]
+GO
+
+--Connect XML
+SELECT CONVERT (xml,BulkColumn,2)
+FROM OpenRowSet(Bulk 'C:\External_HDD\XMLFile1.xml',SINGLE_BLOB) AS A;
+GO
+
+--Connect
+SELECT * FROM OpenRowSet('SQLNCLI',
+'Server=SOKPHEAKDEY;Trusted_Connection=YES;',
+'SELECT * FROM TestDBMS.dbo.Tbl_Student');
